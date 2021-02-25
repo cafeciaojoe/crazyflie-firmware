@@ -139,7 +139,7 @@ typedef void (*Ledring12Effect)(uint8_t buffer[][3], bool reset);
   dest[2] = ((uint16_t)B5 * 527 + 23) >> 6;
 
 #ifndef LEDRING_DEFAULT_EFFECT
-#define LEDRING_DEFAULT_EFFECT 6
+#define LEDRING_DEFAULT_EFFECT 18
 #endif
 
 #define LEDRING_TIME_MEM_SEC 1000 / 25
@@ -779,7 +779,7 @@ static void lighthouseEffect(uint8_t buffer[][3], bool reset)
     uint16_t validAngles = pulseProcessorAnglesQuality();
   #endif
 
-  for (int i = 0; i < NBR_LEDS; i++) {
+  for (int i = 0; i < 1; i++) {
     buffer[i][0] = LIMIT(LINSCALE(0.0f, 255.0f, 100.0f, 0.0f, validAngles)); // Red (small validAngles)
     buffer[i][1] = LIMIT(LINSCALE(0.0f, 255.0f, 0.0f, 100.0f, validAngles)); // Green (large validAngles)
     buffer[i][2] = 0;

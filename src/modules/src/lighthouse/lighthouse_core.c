@@ -98,34 +98,64 @@ static uint32_t nextUpdateTimeOfSystemStatus = 0;
 
 static uint16_t pulseWidth[PULSE_PROCESSOR_N_SENSORS];
 pulseProcessor_t lighthouseCoreState = {
-  // .bsGeometry = {
-    // Arena LH1
-    // {.valid = true, .origin = {-1.958483,  0.542299,  3.152727, }, .mat = {{0.79721498, -0.004274, 0.60368103, }, {0.0, 0.99997503, 0.00708, }, {-0.60369599, -0.005645, 0.79719502, }, }},
-    // {.valid = true, .origin = {1.062398, -2.563488,  3.112367, }, .mat = {{0.018067, -0.999336, 0.031647, }, {0.76125097, 0.034269, 0.64755201, }, {-0.648206, 0.012392, 0.76136398, }, }},
+////        finding mt values
+//       .bsGeometry = {
+//     {.valid = true, .origin = {-0.535540, -0.818941, 1.286868, }, .mat = {{0.565372, -0.620311, 0.543662, }, {0.595597, 0.762999, 0.251192, }, {-0.570631, 0.181787, 0.800833, }, }},
+//   },
 
-    // Arena LH2
-    // {.valid = true, .origin = {-2.057947, 0.398319, 3.109704, }, .mat = {{0.807210, 0.002766, 0.590258, }, {0.067095, 0.993078, -0.096409, }, {-0.586439, 0.117426, 0.801437, }, }},
-    // {.valid = true, .origin = {0.866244, -2.566829, 3.132632, }, .mat = {{-0.043296, -0.997675, -0.052627, }, {0.766284, -0.066962, 0.639003, }, {-0.641042, -0.012661, 0.767401, }, }},
-  // },
+   //Mounted LH2s
+   .bsGeometry = {
+//     {.valid = true, .origin = {1.372729,0.828007,2.535797,}, .mat = {{-0.397244,0.717836,-0.571759,}, {-0.579784,-0.679249,-0.449969,}, {-0.711370,0.152749,0.686018,}, }},
+//     {.valid = true, .origin = {0.044971,-0.344800,2.586955,}, .mat = {{0.385659,-0.685018,0.618076,}, {0.528814,0.713060,0.460326,}, {-0.756057,0.149319,0.637245,}, }},
 
-  // .bsCalibration = {
-  //   // Arena LH2
-  //   { // Base station 0
-  //     .valid = true,
-  //     .sweep = {
-  //       {.tilt = -0.047058, .phase = 0.0, .curve = 0.052215, .gibphase = 2.087890, .gibmag = -0.003913, .ogeephase = 0.433105, .ogeemag = -0.049285},
-  //       {.tilt = 0.048065, .phase = -0.005336, .curve = 0.122375, .gibphase = 2.097656, .gibmag = -0.003883, .ogeephase = 0.631835, .ogeemag = -0.034851},
-  //     },
-  //   },
-  //   { // Base station 1
-  //     .valid = true,
-  //     .sweep = {
-  //       {.tilt = -0.051208, .phase = 0.0, .curve = 0.011756, .gibphase = 2.136718, .gibmag = -0.006057, .ogeephase = 2.705078,},
-  //       {.tilt = 0.045623, .phase = -0.004142, .curve = 0.104736, .gibphase = 2.349609, .gibmag = -0.003332, .ogeephase = 0.380859, .ogeemag = -0.240112,},
-  //     },
-  //   },
-  // }
+//     8 measurements, CF on its side. global ref on the floor.
+       {.valid = true, .origin = {1.478476,0.623313,2.515511,}, .mat = {{-0.484060,0.612882,-0.624549,}, {-0.524108,-0.774621,-0.353938,}, {-0.700711,0.156004,0.696180,}, }},
+       {.valid = true, .origin = {-0.558502,-0.788018,2.526516,}, .mat = {{0.574795,-0.600447,0.555945,}, {0.560090,0.783996,0.267672,}, {-0.596581,0.157523,0.786942,}, }},
+       {.valid = true, .origin = {0.015382,-0.366631,2.703934,}, .mat = {{0.748674,-0.561457,0.352496,}, {0.478762,0.825704,0.298330,}, {-0.458557,-0.054590,0.886987,}, }},
+
+//     8 measurements facing up, Cf on the floor
+//     {.valid = true, .origin = {1.496474,0.676385,1.321087,}, .mat = {{-0.463849,0.643641,-0.608745,}, {-0.526838,-0.752839,-0.394558,}, {-0.712240,0.137695,0.688298,}, }},
+//     {.valid = true, .origin = {-0.480878,-0.785803,1.324651,}, .mat = {{0.542786,-0.631659,0.553526,}, {0.589587,0.755942,0.284499,}, {-0.598140,0.171929,0.782732,}, }},
+//     {.valid = true, .origin = {-0.000422,-0.938488,1.203382,}, .mat = {{0.626998,-0.660871,0.412460,}, {0.611438,0.745560,0.265112,}, {-0.482719,0.085969,0.871546,}, }},
+   },
+
+   .bsCalibration = {
+      //Mounted LH2s
+    { // Base station 0 mode 1
+    .sweep = {
+      {.tilt = -0.051078, .phase = 0.000000, .curve = 0.247043, .gibphase = 1.665625, .gibmag = -0.011288, .ogeephase = 1.538609, .ogeemag = 0.471610, },
+      {.tilt = 0.043630, .phase = -0.004223, .curve = 0.507986, .gibphase = 2.046868, .gibmag = -0.009459, .ogeephase = 2.389616, .ogeemag = 0.375476, },
+             },
+    .valid = true,
+    },
+     { // Base station 1 mode 2
+       .valid = true,
+    .sweep = {
+      {.tilt = -0.049504, .phase = 0.000000, .curve = 0.069301, .gibphase = 1.765391, .gibmag = -0.024516, .ogeephase = 1.742652, .ogeemag = 1.290244, },
+      {.tilt = 0.042626, .phase = -0.004367, .curve = 0.540287, .gibphase = 2.484687, .gibmag = -0.019553, .ogeephase = 2.698655, .ogeemag = 1.096106, },
+       },
+     },
+     { // Base station 2 mode 3
+       .valid = true,
+    .sweep = {
+      {.tilt = -0.049865, .phase = 0.000000, .curve = -0.273323, .gibphase = 1.327240, .gibmag = -0.005672, .ogeephase = 1.370818, .ogeemag = 0.126641, },
+      {.tilt = 0.045034, .phase = 0.006017, .curve = 0.509140, .gibphase = 1.742129, .gibmag = -0.006332, .ogeephase = 2.285476, .ogeemag = 0.210732, },
+       },
+    },
+   }
 };
+
+
+//  // finding mat values
+//    { // Base station 0 mode 1
+//    .sweep = {
+//      {.tilt = -0.049865, .phase = 0.000000, .curve = -0.273323, .gibphase = 1.327240, .gibmag = -0.005672, .ogeephase = 1.370818, .ogeemag = 0.126641, },
+//      {.tilt = 0.045034, .phase = 0.006017, .curve = 0.509140, .gibphase = 1.742129, .gibmag = -0.006332, .ogeephase = 2.285476, .ogeemag = 0.210732, },
+//             },
+//    .valid = true,
+//    },
+//  }
+//};
 
 #if LIGHTHOUSE_FORCE_TYPE == 1
 pulseProcessorProcessPulse_t pulseProcessorProcessPulse = pulseProcessorV1ProcessPulse;

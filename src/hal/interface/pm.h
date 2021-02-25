@@ -31,6 +31,12 @@
 #include "syslink.h"
 #include "deck.h"
 
+
+#ifndef CRITICAL_SAG_VOLTAGE
+  #define PM_BAT_CRITICAL_SAG_VOLTAGE   2.65f
+#else
+  #define PM_BAT_CRITICAL_SAG_VOLTAGE   CRITICAL_SAG_VOLTAGE
+#endif
 #ifndef CRITICAL_LOW_VOLTAGE
   #define PM_BAT_CRITICAL_LOW_VOLTAGE   3.0f
 #else

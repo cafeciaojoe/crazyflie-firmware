@@ -33,7 +33,15 @@
 #  1. Connect a USB cable to a lighthouse 2 base station
 #  2. Run the script, use the serial port (usually something like
 #     /dev/tty.usb123456) together with the --dev switch.
-#     >>> get_lh2_clib_data.py --dev /dev/tty.usb123456
+#     >>> get_lh2_calib_data.py --dev /dev/tty.usb123456
+#     For Mac OS Mojave 10.12 lh2 basestation as recognised as '/dev/tty.usbmodem145301'
+#     Use the command 'ls /dev/tty.*' in the terminal to find the right serial port
+#     you also need to set the channel to 1 - n
+#     do this by typing screen /dev/tty.usbmodem145301 into the terminal
+#     mode is used to see the mode or channel
+#     mode 1 is to set the channel (channel 0 = mode 1)
+#     type 'param save' to save the setings.
+#     more info can be found in the docs. title: Setting up the lighthouse system page_id: lh_setting_up
 #  3. Copy/paste the output into the appropriate app or other file.
 #
 

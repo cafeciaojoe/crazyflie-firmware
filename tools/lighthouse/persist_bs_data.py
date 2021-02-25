@@ -43,7 +43,7 @@ from cflib.crazyflie.mem import LighthouseBsGeometry
 from cflib.crazyflie.mem import MemoryElement
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
-uri = 'radio://0/30'
+uri = "radio://0/80/2M"
 
 
 class WriteMem:
@@ -100,49 +100,50 @@ class WriteMem:
 
 
 geo0 = LighthouseBsGeometry()
-geo0.origin = [-1.01977998,-0.19424433, 1.97086964]
-geo0.rotation_matrix = [[ 0.66385385,-0.26347329, 0.6999142 ], [0.18206993,0.96466617,0.19044612], [-0.72536102, 0.00100494, 0.68836792], ]
+geo0.origin = [-0.57477044,-0.83214664, 2.48939668]
+geo0.rotation_matrix = [[ 0.59742972,-0.65980477, 0.45577999], [0.53718765,0.75127166,0.38343228], [-0.59540504, 0.01576554, 0.80327099], ]
 geo0.valid = True
 
 geo1 = LighthouseBsGeometry()
-geo1.origin = [0, 0, 0]
-geo1.rotation_matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-geo1.valid = False
+geo1.origin = [1.49820781,0.73088941,2.40678524]
+geo1.rotation_matrix = [[-0.5372352 , 0.74389358,-0.397493  ], [-0.49024846,-0.65890823,-0.57052291], [-0.68631974,-0.11163466, 0.71868138], ]
+geo1.valid = True
 
+# Lh2 - 0
 calib0 = LighthouseBsCalibration()
-calib0.sweeps[0].tilt = -0.047353
+calib0.sweeps[0].tilt = -0.051078
 calib0.sweeps[0].phase = 0.000000
-calib0.sweeps[0].curve = 0.478887
-calib0.sweeps[0].gibphase = 1.023093
-calib0.sweeps[0].gibmag = 0.005071
-calib0.sweeps[0].ogeephase = 1.136886
-calib0.sweeps[0].ogeemag = -0.520102
-calib0.sweeps[1].tilt = 0.049104
-calib0.sweeps[1].phase = -0.006642
-calib0.sweeps[1].curve = 0.675827
-calib0.sweeps[1].gibphase = 2.367835
-calib0.sweeps[1].gibmag = 0.004907
-calib0.sweeps[1].ogeephase = 1.900456
-calib0.sweeps[1].ogeemag = -0.457289
+calib0.sweeps[0].curve = 0.247043
+calib0.sweeps[0].gibphase = 1.665625
+calib0.sweeps[0].gibmag = -0.011288
+calib0.sweeps[0].ogeephase = 1.538609
+calib0.sweeps[0].ogeemag = 0.471610
+calib0.sweeps[1].tilt = 0.043630
+calib0.sweeps[1].phase = -0.004223
+calib0.sweeps[1].curve = 0.507986
+calib0.sweeps[1].gibphase = 2.046868
+calib0.sweeps[1].gibmag = -0.009459
+calib0.sweeps[1].ogeephase = 2.389616
+calib0.sweeps[1].ogeemag = 0.375476
 calib0.valid = True
 
+# LH2 = 1
 calib1 = LighthouseBsCalibration()
-calib1.sweeps[0].tilt = -0.048959
+calib1.sweeps[0].tilt = -0.049504
 calib1.sweeps[0].phase = 0.000000
-calib1.sweeps[0].curve = 0.144913
-calib1.sweeps[0].gibphase = 1.288635
-calib1.sweeps[0].gibmag = -0.005397
-calib1.sweeps[0].ogeephase = 2.004001
-calib1.sweeps[0].ogeemag = 0.033096
-calib1.sweeps[1].tilt = 0.047509
-calib1.sweeps[1].phase = -0.004676
-calib1.sweeps[1].curve = 0.374379
-calib1.sweeps[1].gibphase = 1.727613
-calib1.sweeps[1].gibmag = -0.005642
-calib1.sweeps[1].ogeephase = 2.586835
-calib1.sweeps[1].ogeemag = 0.117884
+calib1.sweeps[0].curve = 0.069301
+calib1.sweeps[0].gibphase = 1.765391
+calib1.sweeps[0].gibmag = -0.024516
+calib1.sweeps[0].ogeephase = 1.742652
+calib1.sweeps[0].ogeemag = 1.290244
+calib1.sweeps[1].tilt = 0.042626
+calib1.sweeps[1].phase = -0.004367
+calib1.sweeps[1].curve = 0.540287
+calib1.sweeps[1].gibphase = 2.484687
+calib1.sweeps[1].gibmag = -0.019553
+calib1.sweeps[1].ogeephase = 2.698655
+calib1.sweeps[1].ogeemag = 1.096106
 calib1.valid = True
-
 
 logging.basicConfig(level=logging.ERROR)
 cflib.crtp.init_drivers(enable_debug_driver=False)
