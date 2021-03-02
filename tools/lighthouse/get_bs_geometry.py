@@ -54,6 +54,14 @@ from cflib.localization import LighthouseBsGeoEstimator
 from cflib.localization import LighthouseSweepAngleAverageReader
 
 
+def save_sensor_data(sensor_vectors_all):
+    """
+    Save raw data that CF is receiving from base stations
+    """
+    import pickle
+    pickle.dump(sensor_vectors_all, open("sensor_data.pickle", "wb"))
+
+
 class Estimator:
     def __init__(self):
         self.sensor_vectors_all = None
@@ -80,6 +88,10 @@ class Estimator:
             print("Estimating position of base stations...")
             geometries = {}
             estimator = LighthouseBsGeoEstimator()
+
+            # Temporary: outputting sensor data for testing and debugging
+            save_sensor_data(self.sensor_vectors_all)
+
             for id in sorted(self.sensor_vectors_all.keys()):
                 average_data = self.sensor_vectors_all[id]
                 sensor_data = average_data[1]
