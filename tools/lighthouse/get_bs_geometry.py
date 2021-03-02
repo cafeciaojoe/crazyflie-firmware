@@ -59,7 +59,11 @@ def save_sensor_data(sensor_vectors_all):
     Save raw data that CF is receiving from base stations
     """
     import pickle
-    pickle.dump(sensor_vectors_all, open("sensor_data.pickle", "wb"))
+    import datetime
+    timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
+    pickle.dump(
+        sensor_vectors_all, open(f"sensor_data_{timestamp}.pickle", "wb")
+    )
 
 
 class Estimator:
