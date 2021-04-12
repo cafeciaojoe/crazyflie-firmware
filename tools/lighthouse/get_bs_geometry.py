@@ -40,6 +40,7 @@
 #  4. Copy/paste the output into lighthouse.c, recompile and flash the Crazyflie.
 #
 
+import time
 import argparse
 import logging
 import numpy as np
@@ -52,6 +53,24 @@ from cflib.crazyflie.mem import LighthouseMemHelper
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.localization import LighthouseBsGeoEstimator
 from cflib.localization import LighthouseSweepAngleAverageReader
+
+from tools.lighthouse.combine_measurements import combine_measurements
+
+
+def yes_or_no(question):
+    check = str(input(f"{question} (Y/N): ")).lower().strip()
+    try:
+        if check[0] == 'y':
+            return True
+        elif check[0] == 'n':
+            return False
+        else:
+            print("Please enter a valid value (Y/N)")
+            return yes_or_no(question)
+    except Exception as error:
+        print("Please enter a valid value (Y/N)")
+        print(error)
+        return yes_or_no(question)
 
 
 def save_sensor_data(sensor_vectors_all):
@@ -83,37 +102,82 @@ class Estimator:
 
     def estimate(self, uri, do_write):
         cf = Crazyflie(rw_cache='./cache')
+        all_measurements = []
+
         with SyncCrazyflie(uri, cf=cf) as scf:
-            print("Reading sensor data...")
-            sweep_angle_reader = LighthouseSweepAngleAverageReader(scf.cf, self.angles_collected_cb)
-            sweep_angle_reader.start_angle_collection()
-            self.collection_event.wait()
 
-            print("Estimating position of base stations...")
-            geometries = {}
-            estimator = LighthouseBsGeoEstimator()
+            user_wants_to_continue = True
 
-            # Temporary: outputting sensor data for testing and debugging
-            save_sensor_data(self.sensor_vectors_all)
+            while user_wants_to_continue:
 
-            for id in sorted(self.sensor_vectors_all.keys()):
-                average_data = self.sensor_vectors_all[id]
-                sensor_data = average_data[1]
-                rotation_bs_matrix, position_bs_vector = estimator.estimate_geometry(sensor_data)
-                is_valid = estimator.sanity_check_result(position_bs_vector)
-                if is_valid:
-                    geo = LighthouseBsGeometry()
-                    geo.rotation_matrix = rotation_bs_matrix
-                    geo.origin = position_bs_vector
-                    geo.valid = True
+                time.sleep(5000)
 
-                    geometries[id] = geo
+                print("Starting measurement procedure... ")
+                cf_is_sideways = yes_or_no(
+                    "Is the CF oriented on its side? "
+                    "Note that the CF should not be on "
+                    "its side for the first measurement."
+                )
 
-                    self.print_geo(rotation_bs_matrix, position_bs_vector, is_valid)
-                else:
-                    print("Warning: could not find valid solution for " + id + 1)
+                if cf_is_sideways:
+                    print(
+                        "The CF is oriented on its side. Beginning sweep... "
+                    )
 
-                print()
+                if cf_is_sideways:
+                    print(
+                        "The CF is not oriented on its side. "
+                        "Beginning sweep... "
+                    )
+
+                print("Reading sensor data...")
+                sweep_angle_reader = LighthouseSweepAngleAverageReader(
+                    scf.cf, self.angles_collected_cb
+                )
+                sweep_angle_reader.start_angle_collection()
+                self.collection_event.wait()
+
+                print("Estimating position of base stations...")
+                geometries = {}
+                lbge = LighthouseBsGeoEstimator()
+
+                # Temporary: outputting sensor data for testing and debugging
+                save_sensor_data(self.sensor_vectors_all)
+
+                for bs_id in sorted(self.sensor_vectors_all.keys()):
+                    average_data = self.sensor_vectors_all[bs_id]
+                    sensor_data = average_data[1]
+
+                    rotation_bs_matrix, position_bs_vector = lbge.estimate_geometry(
+                        sensor_data, bs_id=bs_id, sideways=cf_is_sideways
+                    )
+
+                    is_valid = lbge.sanity_check_result(position_bs_vector)
+
+                    if is_valid:
+                        geo = LighthouseBsGeometry()
+                        geo.rotation_matrix = rotation_bs_matrix
+                        geo.origin = position_bs_vector
+                        geo.valid = True
+
+                        geometries[bs_id] = geo
+
+                        self.print_geo(rotation_bs_matrix, position_bs_vector,
+                                       is_valid)
+                    else:
+                        print(f"Warning: could not find valid solution for "
+                              f"{bs_id}")
+
+                    all_measurements.append(geometries)
+
+                    print()
+                    user_wants_to_continue = yes_or_no(
+                        "Would you like to take another measurement?")
+                    if user_wants_to_continue:
+                        print("Sure! You may now move the drone.")
+
+            print("All measurements taken. Combining measurements...")
+            geometries = combine_measurements(all_measurements)
 
             if do_write:
                 print("Uploading geo data to CF")
