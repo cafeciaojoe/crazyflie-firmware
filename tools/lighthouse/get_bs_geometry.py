@@ -55,7 +55,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.localization import LighthouseBsGeoEstimator
 from cflib.localization import LighthouseSweepAngleAverageReader
 
-from tools.lighthouse.combine_measurements import combine_measurements
+from combine_measurements import combine_measurements
 
 
 def bs_is_on_ceiling(bs_id):
