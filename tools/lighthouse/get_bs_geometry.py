@@ -40,6 +40,7 @@
 #  4. Copy/paste the output into lighthouse.c, recompile and flash the Crazyflie.
 #
 
+import math
 import time
 import argparse
 import logging
@@ -55,6 +56,16 @@ from cflib.localization import LighthouseBsGeoEstimator
 from cflib.localization import LighthouseSweepAngleAverageReader
 
 from tools.lighthouse.combine_measurements import combine_measurements
+
+
+def bs_is_on_ceiling(bs_id):
+    # When sideways
+    if bs_id == 0:
+        return True
+    if bs_id == 1:
+        return True
+    if bs_id == 2:
+        return False
 
 
 def yes_or_no(question):
@@ -149,8 +160,31 @@ class Estimator:
                     sensor_data = average_data[1]
 
                     rotation_bs_matrix, position_bs_vector = lbge.estimate_geometry(
-                        sensor_data, bs_id=bs_id, sideways=cf_is_sideways
+                        sensor_data
                     )
+
+                    # Adjust result if CF is sideways
+                    if cf_is_sideways:
+                        print(
+                            "Adjusting BS estimation results for sideways CF...")
+
+                        if bs_is_on_ceiling(bs_id):
+                            print(f"Adjusting BS {bs_id}...")
+                            position_bs_vector[1] = -position_bs_vector[1]
+                            position_bs_vector[0] = -position_bs_vector[0]
+
+                            r_rot_y = np.array([
+                                [math.cos(math.pi / 2), 0,
+                                 math.sin(math.pi / 2)],
+                                [0, 1, 0],
+                                [-math.sin(math.pi / 2), 0,
+                                 math.cos(math.pi / 2)]
+                            ])
+
+                            rotation_bs_matrix = np.dot(
+                                rotation_bs_matrix,
+                                r_rot_y
+                            )
 
                     is_valid = lbge.sanity_check_result(position_bs_vector)
 
