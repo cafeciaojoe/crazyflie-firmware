@@ -166,7 +166,9 @@ class Estimator:
                     # Adjust result if CF is sideways
                     if cf_is_sideways:
                         print(
-                            "Adjusting BS estimation results for sideways CF...")
+                            "Adjusting BS estimation results for sideways "
+                            "CF..."
+                        )
 
                         if bs_is_on_ceiling(bs_id):
                             print(f"Adjusting BS {bs_id}...")
@@ -254,8 +256,15 @@ class Estimator:
 
 parser = argparse.ArgumentParser()
 uri = "radio://0/80/2M"
-parser.add_argument("--uri", help="uri to use when connecting to the Crazyflie. Default: " + uri)
-parser.add_argument("--write", help="upload the calculated geo data to the Crazflie", action="store_true")
+parser.add_argument(
+    "--uri",
+    help="uri to use when connecting to the Crazyflie. Default: " + uri
+)
+parser.add_argument(
+    "--write",
+    help="upload the calculated geo data to the Crazflie",
+    action="store_true"
+)
 args = parser.parse_args()
 if args.uri:
     uri = args.uri
