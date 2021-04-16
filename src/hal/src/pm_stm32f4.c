@@ -387,7 +387,19 @@ void pmTask(void *param)
           uint32_t batteryCriticalLowTime;
 
           batteryCriticalLowTime = tickCount - batteryCriticalLowTimeStamp;
+          if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
+          {
+            pmSystemShutdown();
+          }
           if (batteryCriticalLowTime > PM_BAT_CRITICAL_LOW_TIMEOUT)
+          {
+            pmSystemShutdown();
+          }
+          if (batteryCriticalLowTime > PM_BAT_CRITICAL_LOW_TIMEOUT)
+          {
+                      pmSystemShutdown();
+          }
+          if (pmGetBatteryVoltage() < PM_BAT_CRITICAL_SAG_VOLTAGE)
           {
             pmSystemShutdown();
           }
@@ -396,6 +408,10 @@ void pmTask(void *param)
       case battery:
         {
           if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
+          {
+            pmSystemShutdown();
+          }
+          if (pmGetBatteryVoltage() < PM_BAT_CRITICAL_SAG_VOLTAGE)
           {
             pmSystemShutdown();
           }

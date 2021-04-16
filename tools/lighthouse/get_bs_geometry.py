@@ -66,6 +66,8 @@ def bs_is_on_ceiling(bs_id):
         return True
     if bs_id == 2:
         return False
+    if bs_id == 3:
+        return False
 
 
 def yes_or_no(question):
@@ -121,7 +123,7 @@ class Estimator:
 
             while user_wants_to_continue:
 
-                time.sleep(5000)
+                time.sleep(5)
 
                 print("Starting measurement procedure... ")
                 cf_is_sideways = yes_or_no(
@@ -135,7 +137,7 @@ class Estimator:
                         "The CF is oriented on its side. Beginning sweep... "
                     )
 
-                if cf_is_sideways:
+                if not cf_is_sideways:
                     print(
                         "The CF is not oriented on its side. "
                         "Beginning sweep... "
@@ -156,6 +158,7 @@ class Estimator:
                 save_sensor_data(self.sensor_vectors_all)
 
                 for bs_id in sorted(self.sensor_vectors_all.keys()):
+                    print('bs id is',bs_id)
                     average_data = self.sensor_vectors_all[bs_id]
                     sensor_data = average_data[1]
 
@@ -206,11 +209,11 @@ class Estimator:
 
                     all_measurements.append(geometries)
 
-                    print()
-                    user_wants_to_continue = yes_or_no(
-                        "Would you like to take another measurement?")
-                    if user_wants_to_continue:
-                        print("Sure! You may now move the drone.")
+                print()
+                user_wants_to_continue = yes_or_no(
+                    "Would you like to take another measurement?")
+                if user_wants_to_continue:
+                    print("Sure! You may now move the drone.")
 
             print("All measurements taken. Combining measurements...")
             geometries = combine_measurements(all_measurements)
@@ -255,7 +258,7 @@ class Estimator:
 
 
 parser = argparse.ArgumentParser()
-uri = "radio://0/80/2M"
+uri = "radio://0/80/2M/A0A0A0A0A3"
 parser.add_argument(
     "--uri",
     help="uri to use when connecting to the Crazyflie. Default: " + uri

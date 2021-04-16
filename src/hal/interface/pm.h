@@ -31,6 +31,11 @@
 #include "syslink.h"
 #include "deck.h"
 
+#ifndef CRITICAL_SAG_VOLTAGE
+  #define PM_BAT_CRITICAL_SAG_VOLTAGE   2.65f
+#else
+  #define PM_BAT_CRITICAL_SAG_VOLTAGE   CRITICAL_SAG_VOLTAGE
+#endif
 #ifndef CRITICAL_LOW_VOLTAGE
   #define PM_BAT_CRITICAL_LOW_VOLTAGE   3.0f
 #else
@@ -54,7 +59,7 @@
 #endif
 
 #ifndef SYSTEM_SHUTDOWN_TIMEOUT
-  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 5) // 5 min default
+  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 2) // 5 min default
 #else
   #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * SYSTEM_SHUTDOWN_TIMEOUT)
 #endif
