@@ -206,11 +206,11 @@ class Estimator:
 
                     all_measurements.append(geometries)
 
-                    print()
-                    user_wants_to_continue = yes_or_no(
-                        "Would you like to take another measurement?")
-                    if user_wants_to_continue:
-                        print("Sure! You may now move the drone.")
+                print()
+                user_wants_to_continue = yes_or_no(
+                    "Would you like to take another measurement?")
+                if user_wants_to_continue:
+                    print("Sure! You may now move the drone.")
 
             print("All measurements taken. Combining measurements...")
             geometries = combine_measurements(all_measurements)

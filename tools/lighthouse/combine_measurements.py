@@ -102,9 +102,8 @@ def combine_measurements(measurements):
 
     # Convert measurements to System format
     measurements = [
-        System(geom.origin, geom.rotation_matrix, bs_id)
+        [System(geom.origin, geom.rotation_matrix, bs_id) for bs_id, geom in m.items()]
         for m in measurements
-        for bs_id, geom in m.items()
     ]
 
     print()
