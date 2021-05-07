@@ -374,12 +374,20 @@ void pmTask(void *param)
     switch (pmState)
     {
       case charged:
+          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
+          {
+            pmSystemShutdown();
+          }
         break;
       case charging:
         {
           // Charge level between 0.0 and 1.0
           float chargeLevel = pmBatteryChargeFromVoltage(pmGetBatteryVoltage()) / 10.0f;
           ledseqSetChargeLevel(chargeLevel);
+          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
+          {
+            pmSystemShutdown();
+          }
         }
         break;
       case lowPower:

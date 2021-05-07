@@ -32,17 +32,18 @@
 #include "deck.h"
 
 #ifndef CRITICAL_SAG_VOLTAGE
-  #define PM_BAT_CRITICAL_SAG_VOLTAGE   2.65f
+//TODO try 3.0 sag voltage.
+  #define PM_BAT_CRITICAL_SAG_VOLTAGE   2.68f
 #else
   #define PM_BAT_CRITICAL_SAG_VOLTAGE   CRITICAL_SAG_VOLTAGE
 #endif
 #ifndef CRITICAL_LOW_VOLTAGE
-  #define PM_BAT_CRITICAL_LOW_VOLTAGE   3.0f
+  #define PM_BAT_CRITICAL_LOW_VOLTAGE   3.1f
 #else
   #define PM_BAT_CRITICAL_LOW_VOLTAGE   CRITICAL_LOW_VOLTAGE
 #endif
 #ifndef CRITICAL_LOW_TIMEOUT
-  #define PM_BAT_CRITICAL_LOW_TIMEOUT   M2T(1000 * 5) // 5 sec default
+  #define PM_BAT_CRITICAL_LOW_TIMEOUT   M2T(1000 * 1) // 5 sec default
 #else
   #define PM_BAT_CRITICAL_LOW_TIMEOUT   CRITICAL_LOW_TIMEOUT
 #endif
@@ -52,6 +53,7 @@
 #else
   #define PM_BAT_LOW_VOLTAGE   LOW_VOLTAGE
 #endif
+
 #ifndef LOW_TIMEOUT
   #define PM_BAT_LOW_TIMEOUT   M2T(1000 * 5) // 5 sec default
 #else
@@ -59,9 +61,15 @@
 #endif
 
 #ifndef SYSTEM_SHUTDOWN_TIMEOUT
-  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 2) // 5 min default
+  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 20) // 5 min default
 #else
   #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * SYSTEM_SHUTDOWN_TIMEOUT)
+#endif
+
+#ifndef PM_CHARGING_TIMEOUT
+  #define PM_CHARGING_TIMEOUT    M2T(1000 * 10) // 5 sec default
+#else
+  #define PM_CHARGING_TIMEOUT    M2T(1000 * PM_CHARGING_TIMEOUT)
 #endif
 
 #define PM_BAT_DIVIDER                3.0f

@@ -55,18 +55,16 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.localization import LighthouseBsGeoEstimator
 from cflib.localization import LighthouseSweepAngleAverageReader
 
-from combine_measurements import combine_measurements
+from cflib.localization import LighthouseConfigFileManager
+from datetime import datetime
 
+from combine_measurements import combine_measurements
 
 def bs_is_on_ceiling(bs_id):
     # When sideways
-    if bs_id == 0:
+    if bs_id in [0, 1, 2, 3]:
         return True
-    if bs_id == 1:
-        return True
-    if bs_id == 2:
-        return False
-    if bs_id == 3:
+    else:
         return False
 
 
@@ -144,6 +142,7 @@ class Estimator:
                     )
 
                 print("Reading sensor data...")
+                time.sleep(5)
                 sweep_angle_reader = LighthouseSweepAngleAverageReader(
                     scf.cf, self.angles_collected_cb
                 )
@@ -151,6 +150,7 @@ class Estimator:
                 self.collection_event.wait()
 
                 print("Estimating position of base stations...")
+                time.sleep(5)
                 geometries = {}
                 lbge = LighthouseBsGeoEstimator()
 
@@ -158,7 +158,7 @@ class Estimator:
                 save_sensor_data(self.sensor_vectors_all)
 
                 for bs_id in sorted(self.sensor_vectors_all.keys()):
-                    print('bs id is',bs_id)
+                    print('bs id is', bs_id)
                     average_data = self.sensor_vectors_all[bs_id]
                     sensor_data = average_data[1]
 
@@ -207,7 +207,7 @@ class Estimator:
                         print(f"Warning: could not find valid solution for "
                               f"{bs_id}")
 
-                    all_measurements.append(geometries)
+                all_measurements.append(geometries)
 
                 print()
                 user_wants_to_continue = yes_or_no(
@@ -217,6 +217,8 @@ class Estimator:
 
             print("All measurements taken. Combining measurements...")
             geometries = combine_measurements(all_measurements)
+
+            self.create_config_file(geometries)
 
             if do_write:
                 print("Uploading geo data to CF")
@@ -255,6 +257,17 @@ class Estimator:
             print(', ', end='')
         print(']')
         print('geo.valid =', is_valid)
+
+    def create_config_file(self, geos):
+        # TODO check that geos is in the right format for LighthouseConfigManager
+        now = datetime.now()
+        filename = now.strftime("%d-%m-%Y--%H:%M:%S") + '.json'
+        # retrieve calibration data from file.
+        calibs = (LighthouseConfigFileManager.read('calibration_data.json'))[1]
+        # retrieve system_type data from file.
+        system_type = (LighthouseConfigFileManager.read('calibration_data.json'))[2]
+        (LighthouseConfigFileManager.write(filename, geos=geos, calibs=calibs, system_type=system_type))
+        print("Configfile created", filename)
 
 
 parser = argparse.ArgumentParser()
