@@ -261,11 +261,14 @@ class Estimator:
     def create_config_file(self, geos):
         # TODO check that geos is in the right format for LighthouseConfigManager
         now = datetime.now()
-        filename = now.strftime("%d-%m-%Y--%H:%M:%S") + '.json'
+        filename = now.strftime("%d-%m-%Y--%H-%M-%S") + '.json'
         # retrieve calibration data from file.
         calibs = (LighthouseConfigFileManager.read('calibration_data.json'))[1]
         # retrieve system_type data from file.
         system_type = (LighthouseConfigFileManager.read('calibration_data.json'))[2]
+        for bs_id, geo in geos.items():
+            geo.origin = geo.origin.tolist()
+            geo.rotation_matrix = geo.rotation_matrix.tolist()
         (LighthouseConfigFileManager.write(filename, geos=geos, calibs=calibs, system_type=system_type))
         print("Configfile created", filename)
 

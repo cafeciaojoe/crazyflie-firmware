@@ -432,6 +432,8 @@ static void estimateYaw(const pulseProcessor_t *state, pulseProcessorResult_t* a
   // Calculate yaw delta using only one base station for now
   float yawDelta;
   if (estimateYawDeltaOneBaseStation(baseStation, angles, state->bsGeometry, cfPos, n, &RR, &yawDelta)) {
+//  commended out recommended by Kristoffer. to stop the hand pads tripping out when they read a BS that is beneath them
+// whilst upside down. Should be uncommented for the drones.
     yawErrorMeasurement_t yawDeltaMeasurement = {.yawError = yawDelta, .stdDev = 0.01};
     estimatorEnqueueYawError(&yawDeltaMeasurement);
   }
