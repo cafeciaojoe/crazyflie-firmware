@@ -245,7 +245,8 @@ static void melodyplayer(uint32_t counter, uint32_t * mi, Melody * m) {
 }
 
 static uint8_t static_ratio = 0;
-static uint16_t static_freq = 4000;
+//default static_freq typically 4000
+static uint16_t static_freq = 0;
 static void bypass(uint32_t counter, uint32_t * mi, Melody * melody)
 {
   buzzerOn(static_freq);

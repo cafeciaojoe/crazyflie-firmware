@@ -384,10 +384,11 @@ void pmTask(void *param)
           // Charge level between 0.0 and 1.0
           float chargeLevel = pmBatteryChargeFromVoltage(pmGetBatteryVoltage()) / 10.0f;
           ledseqSetChargeLevel(chargeLevel);
-          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
-          {
-            pmSystemShutdown();
-          }
+//        //removed charging shutdown for handpads.
+//          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
+//          {
+//            pmSystemShutdown();
+//          }
         }
         break;
       case lowPower:
@@ -395,10 +396,11 @@ void pmTask(void *param)
           uint32_t batteryCriticalLowTime;
 
           batteryCriticalLowTime = tickCount - batteryCriticalLowTimeStamp;
-          if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
-          {
-            pmSystemShutdown();
-          }
+//        //removed system shutdown for handpads.
+//          if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
+//          {
+//            pmSystemShutdown();
+//          }
           if (batteryCriticalLowTime > PM_BAT_CRITICAL_LOW_TIMEOUT)
           {
             pmSystemShutdown();
@@ -415,10 +417,10 @@ void pmTask(void *param)
         break;
       case battery:
         {
-          if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
-          {
-            pmSystemShutdown();
-          }
+//          if ((commanderGetInactivityTime() > PM_SYSTEM_SHUTDOWN_TIMEOUT))
+//          {
+//            pmSystemShutdown();
+//          }
           if (pmGetBatteryVoltage() < PM_BAT_CRITICAL_SAG_VOLTAGE)
           {
             pmSystemShutdown();
