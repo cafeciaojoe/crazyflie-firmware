@@ -374,10 +374,10 @@ void pmTask(void *param)
     switch (pmState)
     {
       case charged:
-          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
-          {
-            pmSystemShutdown();
-          }
+//          if ((commanderGetInactivityTime() > PM_CHARGING_TIMEOUT))
+//          {
+//            pmSystemShutdown();
+//          }
         break;
       case charging:
         {

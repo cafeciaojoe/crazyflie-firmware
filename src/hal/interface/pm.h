@@ -61,7 +61,7 @@
 #endif
 
 #ifndef SYSTEM_SHUTDOWN_TIMEOUT
-  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 20) // 5 min default
+  #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * 2) // 5 min default, last multiplier is the number of minutes.
 #else
   #define PM_SYSTEM_SHUTDOWN_TIMEOUT    M2T(1000 * 60 * SYSTEM_SHUTDOWN_TIMEOUT)
 #endif
