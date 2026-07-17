@@ -1,4 +1,4 @@
-/**
+    /**
  * ,---------,       ____  _ __
  * |  ,-^-,  |      / __ )(_) /_______________ _____  ___
  * | (  O  ) |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
@@ -54,8 +54,32 @@
     #define ARM_LENGTH  0.046f
 #endif
 #ifndef CF_MASS
-    // kg
-    #define CF_MASS     0.027f
+    #if defined(CONFIG_MODIFY_CF_MASS) && defined(CONFIG_MODIFIED_CF_MASS) && (CONFIG_MODIFIED_CF_MASS >= 0)
+        #define CF_MASS (CONFIG_MODIFIED_CF_MASS / 1000000.0f)
+    #else
+        #define CF_MASS    0.029f
+    #endif
+#endif
+#ifndef VMOTOR2THRUST0
+    #define VMOTOR2THRUST0  0.0f
+#endif
+#ifndef VMOTOR2THRUST1
+    #define VMOTOR2THRUST1  0.0f
+#endif
+#ifndef VMOTOR2THRUST2
+    #define VMOTOR2THRUST2  0.0f
+#endif
+#ifndef VMOTOR2THRUST3
+    #define VMOTOR2THRUST3  0.0f
+#endif
+#ifndef THRUST_MIN
+    #define THRUST_MIN      0.02f
+#endif
+#ifndef THRUST_MAX
+    #define THRUST_MAX      0.1125f
+#endif
+#ifndef THRUST2TORQUE
+    #define THRUST2TORQUE   0.005964552f
 #endif
 
 // IMU alignment on the airframe 
@@ -157,6 +181,11 @@
     #define LANDING_TIMEOUT_MS 3000
 #endif
 
+// Motor spin-up wait timeout during arming
+#ifndef ARMING_SPINUP_TIMEOUT_MS
+    #define ARMING_SPINUP_TIMEOUT_MS 2000
+#endif
+
 
 // Health test parameters
 #ifndef HEALTH_BRUSHED_ON_PERIOD_MSEC
@@ -182,7 +211,60 @@
     #define HEALTH_BRUSHLESS_OFF_PERIOD_MSEC 1000
 #endif
 #ifndef HEALTH_BRUSHLESS_VARIANCE_START_MSEC
-    #define HEALTH_BRUSHLESS_VARIANCE_START_MSEC 1000
+    #define HEALTH_BRUSHLESS_VARIANCE_START_MSEC 1500
 #endif
 
+
+// This is the threshold for a propeller/motor to pass. It calculates the
+// variance of the accelerometer X+Y when the propeller is spinning.
+#ifndef HEALTH_PROPELLER_TEST_THRESHOLD
+    #define HEALTH_PROPELLER_TEST_THRESHOLD  0.0f
+#endif
+#ifndef HEALTH_PROPELLER_TEST_THRESHOLD_LOW
+    #define HEALTH_PROPELLER_TEST_THRESHOLD_LOW  0.01f
+#endif
+
+// For safety, when the BigQuad deck is enabled, the user should
+// know when the platform is ready to fly.
+#ifdef CONFIG_DECK_BIGQUAD
+    #define CONFIG_MOTORS_REQUIRE_ARMING 1
+    #ifndef CONFIG_MOTORS_DEFAULT_IDLE_THRUST
+        #define CONFIG_MOTORS_DEFAULT_IDLE_THRUST 7000
+    #endif
+#endif
+
+// Flow deck position constants
+// Distance of camera sensor of the flow deck,
+// with respect to center of mass, in meters.
+#ifndef FLOWDECK_POS_X
+    #define FLOWDECK_POS_X 0.0f
+#endif
+#ifndef FLOWDECK_POS_Y
+    #define FLOWDECK_POS_Y 0.0f
+#endif
+#ifndef FLOWDECK_POS_Z
+    #define FLOWDECK_POS_Z 0.0f
+#endif
+
+// Drag coefficients (in N*s/m)
+#ifndef DRAG_B_X
+    #define DRAG_B_X 0.0f
+#endif
+#ifndef DRAG_B_Y
+    #define DRAG_B_Y 0.0f
+#endif
+#ifndef DRAG_B_Z
+    #define DRAG_B_Z 0.0f
+#endif
+
+// Center of pressure offset relative to the the centre of mass, in body frame (in meters)
+#ifndef CENTER_OF_PRESSURE_X
+    #define CENTER_OF_PRESSURE_X 0.0f
+#endif
+#ifndef CENTER_OF_PRESSURE_Y
+    #define CENTER_OF_PRESSURE_Y 0.0f
+#endif
+#ifndef CENTER_OF_PRESSURE_Z
+    #define CENTER_OF_PRESSURE_Z 0.0f
+#endif
 

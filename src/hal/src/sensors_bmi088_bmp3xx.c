@@ -115,10 +115,9 @@ STATIC_MEM_QUEUE_ALLOC(magnetometerDataQueue, 1, sizeof(Axis3f));
 static xQueueHandle barometerDataQueue;
 STATIC_MEM_QUEUE_ALLOC(barometerDataQueue, 1, sizeof(baro_t));
 
-static xSemaphoreHandle sensorsDataReady;
-static StaticSemaphore_t sensorsDataReadyBuffer;
 static xSemaphoreHandle dataReady;
 static StaticSemaphore_t dataReadyBuffer;
+static TaskHandle_t sensorsTaskHandle;
 
 static bool isInit = false;
 static sensorData_t sensorData;
@@ -182,6 +181,9 @@ STATIC_MEM_TASK_ALLOC(sensorsTask, SENSORS_TASK_STACKSIZE);
  * @brief Generic burst read
  *
  * @param [out] dev_id I2C address, SPI chip select or user desired identifier
+ * @param reg_addr Register address
+ * @param reg_data Pointer to the data buffer to store the read data
+ * @param len Number of bytes to read
  *
  * @return Zero if successful, otherwise an error code
  */
@@ -202,6 +204,9 @@ bstdr_ret_t bmi088_burst_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_dat
  * @brief Generic burst write
  *
  * @param [out] dev_id I2C address, SPI chip select or user desired identifier
+ * @param reg_addr
+ * @param reg_data
+ * @param len
  *
  * @return Zero if successful, otherwise an error code
  */
@@ -298,7 +303,7 @@ static void sensorsTask(void *param)
   //vTaskDelayUntil(&lastWakeTime, M2T(1500));
   while (1)
   {
-    if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY))
+    if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY))
     {
       sensorData.interruptTimestamp = imuIntTimestamp;
 
@@ -557,7 +562,7 @@ static void sensorsTaskInit(void)
   magnetometerDataQueue = STATIC_MEM_QUEUE_CREATE(magnetometerDataQueue);
   barometerDataQueue = STATIC_MEM_QUEUE_CREATE(barometerDataQueue);
 
-  STATIC_MEM_TASK_CREATE(sensorsTask, sensorsTask, SENSORS_TASK_NAME, NULL, SENSORS_TASK_PRI);
+  sensorsTaskHandle = STATIC_MEM_TASK_CREATE(sensorsTask, sensorsTask, SENSORS_TASK_NAME, NULL, SENSORS_TASK_PRI);
 }
 
 static void sensorsInterruptInit(void)
@@ -565,7 +570,6 @@ static void sensorsInterruptInit(void)
   GPIO_InitTypeDef GPIO_InitStructure;
   EXTI_InitTypeDef EXTI_InitStructure;
 
-  sensorsDataReady = xSemaphoreCreateBinaryStatic(&sensorsDataReadyBuffer);
   dataReady = xSemaphoreCreateBinaryStatic(&dataReadyBuffer);
 
   // Enable the interrupt on PC14
@@ -590,8 +594,8 @@ static void sensorsBmi088Bmp3xxInit(void)
 {
   sensorsBiasObjInit(&gyroBiasRunning);
   sensorsDeviceInit();
-  sensorsInterruptInit();
   sensorsTaskInit();
+  sensorsInterruptInit();
 }
 
 void sensorsBmi088Bmp3xxInit_SPI(void)
@@ -936,7 +940,7 @@ static void sensorsAccAlignToGravity(Axis3f* in, Axis3f* out)
   // Rotate around y-axis
   ry.x = rx.x * cosPitch - rx.z * sinPitch;
   ry.y = rx.y;
-  ry.z = -rx.x * sinPitch + rx.z * cosPitch;
+  ry.z = rx.x * sinPitch + rx.z * cosPitch;
 
   out->x = ry.x;
   out->y = ry.y;
@@ -991,7 +995,7 @@ void sensorsBmi088Bmp3xxDataAvailableCallback(void)
 {
   portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
   imuIntTimestamp = usecTimestamp();
-  xSemaphoreGiveFromISR(sensorsDataReady, &xHigherPriorityTaskWoken);
+  vTaskNotifyGiveFromISR(sensorsTaskHandle, &xHigherPriorityTaskWoken);
 
   if (xHigherPriorityTaskWoken)
   {

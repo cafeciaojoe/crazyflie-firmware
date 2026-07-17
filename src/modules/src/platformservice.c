@@ -40,7 +40,12 @@
 #include "platform.h"
 #include "app_channel.h"
 #include "static_mem.h"
+#include "ledseq.h"
+#include "worker.h"
 #include "supervisor.h"
+
+#define DEBUG_MODULE "PLAT"
+#include "debug.h"
 
 static bool isInit=false;
 STATIC_MEM_TASK_ALLOC_STACK_NO_DMA_CCM_SAFE(platformSrvTask, PLATFORM_SRV_TASK_STACKSIZE);
@@ -52,9 +57,10 @@ typedef enum {
 } Channel;
 
 typedef enum {
-  setContinuousWave  = 0x00,
-  armSystem          = 0x01,
-  recoverSystem     = 0x02, 
+  setContinuousWave    = 0x00,
+  armSystem            = 0x01, // Deprecated: moved to crtp_supervisor
+  recoverSystem        = 0x02, // Deprecated: moved to crtp_supervisor
+  userNotification     = 0x03,
 } PlatformCommand;
 
 typedef enum {
@@ -66,6 +72,7 @@ typedef enum {
 static void platformSrvTask(void*);
 static void platformCommandProcess(CRTPPacket *p);
 static void versionCommandProcess(CRTPPacket *p);
+static void runUserNotification(void* arg);
 
 void platformserviceInit(void)
 {
@@ -129,21 +136,41 @@ static void platformCommandProcess(CRTPPacket *p)
     }
     case armSystem:
     {
+      // Deprecated: use CRTP_PORT_SUPERVISOR instead
+      DEBUG_PRINT("WARNING: arming via platform port is deprecated, use supervisor port\n");
+      if (p->size < 2) {
+        data[0] = false;
+        data[1] = supervisorIsArmed();
+        p->size = 3;
+        break;
+      }
       const bool doArm = data[0];
       const bool success = supervisorRequestArming(doArm);
       data[0] = success;
       data[1] = supervisorIsArmed();
-      p->size = 2;
+      p->size = 3;
       break;
     }
     case recoverSystem:
     {
+      // Deprecated: use CRTP_PORT_SUPERVISOR instead
+      DEBUG_PRINT("WARNING: recovery via platform port is deprecated, use supervisor port\n");
       const bool success = supervisorRequestCrashRecovery(true);
       data[0] = success;
       data[1] = !supervisorIsCrashed();
-      p->size = 2;
+      p->size = 3;
       break;
-    }    
+    }
+    case userNotification:
+    {
+      // 0 - fail
+      // 1 - success
+      const uint8_t notificationType = data[0];
+
+      workerSchedule(runUserNotification, (void*)(uint32_t)notificationType);
+      p->size = 0;
+      break;
+    }
     default:
       break;
   }
@@ -186,5 +213,15 @@ static void versionCommandProcess(CRTPPacket *p)
       break;
     default:
       break;
+  }
+}
+
+static void runUserNotification(void* arg)
+{
+  uint8_t notificationType = (uint32_t)arg;
+  if (notificationType) {
+    ledseqRun(&seq_user_notification_success);
+  } else {
+    ledseqRun(&seq_user_notification_fail);
   }
 }
